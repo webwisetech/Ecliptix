@@ -1,0 +1,4 @@
+name: "Testing"
+packages:
+  - io
+  - math

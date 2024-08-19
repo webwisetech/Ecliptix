@@ -1,0 +1,23 @@
+{
+  "name": "ecliptix",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "ecx": "out/cli.js",
+    "ecpkg": "out/pkgs.js"
+  },
+  "keywords": [],
+  "author": "nicknameopg",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/node": "^22.0.0",
+    "@types/typescript": "^0.4.29",
+    "colors": "^1.4.0",
+    "readline-sync": "^1.4.10",
+    "yaml": "^2.5.0"
+  }
+}

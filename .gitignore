@@ -1,0 +1,5 @@
+node_modules
+out/
+bot.ss
+.vscode/sftp.json
+API/
