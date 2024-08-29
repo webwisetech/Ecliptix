@@ -1,6 +1,6 @@
 import colors from 'colors';
 
-export class SkyScriptErr {
+export class EcliptixErr {
 	constructor(message: string | undefined){
 		if(message === undefined){
 			console.log(colors.cyan("An unknown error happened."))

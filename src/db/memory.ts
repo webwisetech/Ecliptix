@@ -1,10 +1,11 @@
 import { RuntimeValue } from "../runtime/val.js";
-
-export const memory: Record<string, any> = {};
+import EventEmitter from 'node:events';
+const eventEmitter = new EventEmitter();
 
 class Memory {
 	private dataStorage: Map<string, RuntimeValue>;
 	private modules: Set<string>;
+	public eventEmitter = eventEmitter;
 	constructor(){
 		this.dataStorage = new Map();
 		this.modules = new Set();
@@ -27,3 +28,5 @@ class Memory {
 		return this.dataStorage;
 	}
 }
+
+export const memory = new Memory();

@@ -1,8 +1,8 @@
 // deno-lint-ignore-file no-explicit-any prefer-const
 import { memory } from "../db/memory.js";
-import { SkyScriptErr } from "../util/error.js";
+import { EcliptixErr } from "../util/error.js";
 import { translate } from "../util/translate.js";
-import { SkyScriptWarn } from "../util/warn.js";
+import { EcliptixWarn } from "../util/warn.js";
 import {
 	AssignmentExpression,
 	BinaryExpression,
@@ -22,6 +22,8 @@ IfStatement,
 EqualityExpression,
 ArrayLiteral,
 ArrayElement,
+WhenDeclaration,
+WhileStatement,
 } from "./ast.js";
 
 import { Token, typeOfToken } from "./lexer.js";
@@ -45,7 +47,7 @@ export default class Parser {
 	private ensureToken(type: typeOfToken, err: any) {
 		const prev = this.tokens.shift() as Token;
 		if (!prev || prev.type != type) {
-			new SkyScriptErr("Parser Error:\n"+ err +" " +prev + "\n - Expecting: "+ type);
+			new EcliptixErr("Parser Error:\n"+ err +" " +JSON.stringify(prev) + "\n - Expecting: "+ type);
 		}
 
 		return prev;
@@ -69,8 +71,6 @@ export default class Parser {
 	private parse_Statement(): Statement {
 		
 		switch (this.currentToken().type) {
-			case typeOfToken.Using:
-				return this.parseModules();
 			case typeOfToken.Slash:
 				return this.parseComments();
 			case typeOfToken.Set:
@@ -80,29 +80,63 @@ export default class Parser {
 				return this.parseFunctions();
 			case typeOfToken.If:
 				return this.parseIf();
+			case typeOfToken.When:
+				return this.parseWhen();
+			case typeOfToken.While:
+				return this.parseWhile();
 			default:
 				return this.parseExpression();
 		}
 	}
 
-	private addModule(module: string): void{
-		if(module === "discord.ss"){
-			memory["modules"]!["discord.ss"] = true;
-		} else if(module === "colors") {
-			memory["modules"]!["colors"] = true;
-		}else if(module === "nostrict"){
-			memory["modules"]!["nostrict"] = true;
-		} else {
-			new SkyScriptWarn("No module found with name \""+module+"\"");
-		}
+	private parseWhen(): Statement {
+		this.ensureToken(typeOfToken.When, 'Expected "when" keyword.');
+        const conditional = this.parseExpression();
+        const consequent: Statement[] = [];
+        let right: Expression = {} as Expression;
+        let operator: typeOfToken =typeOfToken.BinaryEquals;
+
+        this.ensureToken(typeOfToken.OpenBrace, 'Expected opening brace for consequent block.');
+
+        while (this.currentToken().type !== typeOfToken.EOF && this.currentToken().type !== typeOfToken.CloseBrace) {
+            consequent.push(this.parse_Statement());
+        }
+      
+        this.ensureToken(typeOfToken.CloseBrace, 'Expected closing brace for consequent block.');
+
+        return {
+          kind: 'WhenDeclaration',
+          conditional,
+          operator,
+          right,
+          consequent,
+        } as WhenDeclaration;
 	}
 
-	private parseModules(): Statement{
-		this.nextToken()
-		const a = this.ensureToken(typeOfToken.String, "No module found after the using keyword");
-		this.addModule(a.value);
-		return { kind: "NumericLiteral", value: 0 } as NumericLiteral;
+	private parseWhile(): Statement {
+		this.ensureToken(typeOfToken.While, 'Expected "while" keyword.');
+        const conditional = this.parseExpression();
+        const consequent: Statement[] = [];
+        let right: Expression = {} as Expression;
+        let operator: typeOfToken =typeOfToken.BinaryEquals;
+
+        this.ensureToken(typeOfToken.OpenBrace, 'Expected opening brace for consequent block.');
+
+        while (this.currentToken().type !== typeOfToken.EOF && this.currentToken().type !== typeOfToken.CloseBrace) {
+            consequent.push(this.parse_Statement());
+        }
+      
+        this.ensureToken(typeOfToken.CloseBrace, 'Expected closing brace for consequent block.');
+
+        return {
+          kind: 'WhileStatement',
+          conditional,
+          operator,
+          right,
+          body: consequent,
+        } as WhileStatement;
 	}
+
 	private parseComments(): Statement {
 		this.nextToken()
 		while(this.nextToken().type != typeOfToken.Slash && this.isNotEOF()){
@@ -210,7 +244,7 @@ export default class Parser {
 		let type = "";
 
 		this.nextToken();
-		type = this.ensureToken(typeOfToken.Type, "No type given.").value;
+		type = this.ensureToken(typeOfToken.Identifier, "No type given.").value;
 
 		if (this.currentToken().type == typeOfToken.Semicolon) {
 			this.nextToken(); 
@@ -496,7 +530,7 @@ export default class Parser {
 			}
 
 			default:
-				throw new SkyScriptErr("Unknown Token found while parsing." + JSON.stringify(this.currentToken()));
+				throw new EcliptixErr("Unknown Token found while parsing." + JSON.stringify(this.currentToken()));
 		}
 	}
 }

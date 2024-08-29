@@ -2,7 +2,7 @@ import { evaluate } from "../../runtime/index.js";
 import Environment from "../../runtime/env.js";
 import { Runtime, makeNull } from "../../runtime/val.js";
 import { VarDeclaration } from "../../syntax/ast.js";
-import { SkyScriptErr } from "../../util/error.js";
+import { EcliptixErr } from "../../util/error.js";
 
 export function VariableDeclaration(
 	declaration: VarDeclaration,
@@ -12,9 +12,9 @@ export function VariableDeclaration(
 		? evaluate(declaration.value, env)
 		: makeNull();
 
-	if(declaration.type === value.type)
+	if(declaration.type === value.type || declaration.type == typeof value)
 		return env.declareVar(declaration.identifier, value, declaration.constant);
 	else
-		new SkyScriptErr("Expected the variable '"+ declaration.identifier+ "' to have a type of '"+ declaration.type + "' but found '"+ value.type+"' instead.")
+		new EcliptixErr("Expected the variable '"+ declaration.identifier+ "' to have a type of '"+ declaration.type + "' but found '"+ value.type+"' instead.")
 	return makeNull();
 }

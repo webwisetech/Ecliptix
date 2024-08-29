@@ -1,11 +1,12 @@
 #! /usr/bin/env node
 import fs from 'fs';
-import { SkyScriptErr } from './util/error.js';
+import { EcliptixErr } from './util/error.js';
 import { repl, run } from './index.js';
 import _colors from 'colors';
 import Config from './util/config.js';
+import yml from 'yaml';
+import config from './util/config.js';
 const { version } = Config;
-
 
 const [node_exec, ss_path, ...args] = process.argv;
 const help = [
@@ -16,7 +17,8 @@ const help = [
     "\t-h, --help: shows help menu",
     "\t-v, --version: shows language version",
     "\t-r, --repl: starts a Ecliptix REPL",
-    "\t-d, --debug: starts a debug session on the file"
+    "\t-d, --debug: starts a debug session on the file",
+	"\t-i, --init: initializes a new Ecliptix project"
 ]
 let debug = false;
 
@@ -40,6 +42,11 @@ args.forEach(async (v) => {
             case "--debug":
                 debug = !debug;
         break;
+		case "-i":
+			case "--init":
+				const yaml = yml.stringify(config);
+				fs.writeFileSync("proj.yml", yaml);
+		break;
     
         default:
             run(v, debug);

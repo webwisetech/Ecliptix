@@ -15,7 +15,7 @@ import { execSync } from "node:child_process";
 import Environment from "../runtime/env.js";
 import { evaluate } from "../runtime/index.js";
 import { Library } from "./index.js";
-import { SkyScriptErr } from "../util/error.js";
+import { EcliptixErr } from "../util/error.js";
 import { Statement } from '../syntax/ast';
 import { LibraryOptions } from "../util/types.js";
 export default ({ makeStr, library, makeNull }: LibraryOptions) => {
@@ -64,7 +64,7 @@ export default ({ makeStr, library, makeNull }: LibraryOptions) => {
         loop: library.createFunction("loop", function(args: Runtime[], scope: Environment){
             const amt: number = (args[0] as NumberValue).value;
             if(!(args[1] as FunctionValue).body) throw "no function found in call";
-            if(amt < -1) throw new SkyScriptErr("Loops cannot be under -1");
+            if(amt < -1) throw new EcliptixErr("Loops cannot be under -1");
                 const env = new Environment(scope);
     
                 let result: Runtime = makeNull();

@@ -13,7 +13,7 @@ import { readFile } from './util/fs.js'; // file system stuff
 export async function run(path: string ,debug?: boolean){
     const lexer = new Lexer();
     const parser = new Parser();
-    const json = yml.parse(readFile("ss.yml"));
+    const json = yml.parse(readFile("proj.yml"));
     const lib = new Library(json.packages);
     const env = lib.env;
     await lib.registerPacks().then(() => {

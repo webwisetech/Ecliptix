@@ -15,3 +15,5 @@ export * from './stmts/function.js';
 export * from './stmts/if.js';
 export * from './stmts/program.js';
 export * from './stmts/var.js';
+export * from './stmts/when.js';
+export * from './stmts/while.js';

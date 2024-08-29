@@ -1,4 +1,4 @@
-import { SkyScriptErr } from "../util/error.js";
+import { EcliptixErr } from "../util/error.js";
 
 export enum typeOfToken {
 	Number,
@@ -35,7 +35,7 @@ export enum typeOfToken {
 	Take,
 	Give,
 	Using,
-	Type,
+	When,
 	EOF,
 }
 
@@ -54,8 +54,7 @@ const KEYWORDS: Record<string, typeOfToken> = {
 	from: typeOfToken.From, // not implemented - similar to "from" in typescript
 	give: typeOfToken.Give, // not implemented - similar to "export" in typescript
 	using: typeOfToken.Using, // unimplemented
-	number: typeOfToken.Type,
-	string: typeOfToken.Type
+	when: typeOfToken.When
 };
 
 export interface Token {
@@ -264,7 +263,7 @@ export class Lexer {
 							this.src.shift(); 
 						break;
 						default:
-							new SkyScriptErr(
+							new EcliptixErr(
 								"Unreconized character found in source: " +this.src[0].charCodeAt(0) +"\n"+this.src[0]
 							);
 						break;

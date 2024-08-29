@@ -1,6 +1,8 @@
 import { Runtime } from "./val.js";
 import { Library } from "../lib/index.js";
-import { SkyScriptErr } from "../util/error.js";
+import { EcliptixErr } from "../util/error.js";
+import events from 'events'
+import { memory } from "../db/memory.js";
 
 export function createGlobalEnv(){
 	const env = new Environment();
@@ -26,7 +28,7 @@ export default class Environment {
 		constant: boolean
 	): Runtime {
 		if (this.variables.has(varname)) {
-			throw `Cannot declare variable ${varname}. As it already is defined.`;
+			new EcliptixErr(`Cannot declare variable ${varname}. As it already is defined.`);
 		}
 
 		this.variables.set(varname, value);
@@ -41,10 +43,11 @@ export default class Environment {
 
 		
 		if (env.constants.has(varname)) {
-			throw `Cannot reasign to variable ${varname} as it was declared constant.`;
+			new EcliptixErr(`Cannot reasign to variable ${varname} as it was declared constant.`);
 		}
 
 		env.variables.set(varname, value);
+		memory.eventEmitter.emit("varUpdate", this);
 		return value;
 	}
 
@@ -59,7 +62,8 @@ export default class Environment {
 		}
 
 		if (this.parent == undefined) {
-			throw new SkyScriptErr(`Cannot resolve '${varname}' as it does not exist.`);
+			new EcliptixErr(`Cannot resolve '${varname}' as it does not exist.`);
+			throw ""
 		}
 
 		return this.parent.resolve(varname);

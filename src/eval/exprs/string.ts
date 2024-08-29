@@ -1,5 +1,5 @@
 import { StringValue } from "../../runtime/val.js";
-import { SkyScriptErr } from "../../util/error.js";
+import { EcliptixErr } from "../../util/error.js";
 
 export function StringBinaryExpression(
     leftHandSide: StringValue, 
@@ -17,7 +17,7 @@ export function StringBinaryExpression(
 
     if (operator == '+') result = `${lhs.replace("\\n", "\n")}` + `${rhs.replace("\\n", "\n")}`
     else {
-        throw new SkyScriptErr(`Cannot use operator "${operator}" in string Expression.`);
+        throw new EcliptixErr(`Cannot use operator "${operator}" in string Expression.`);
     }
 
     return { value: result, type: 'string' } as StringValue;

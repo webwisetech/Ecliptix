@@ -17,7 +17,7 @@ import {
   ArrayValue,
   ObjectValue
 } from "../runtime/val.js";
-import { SkyScriptWarn } from "../util/warn.js";
+import { EcliptixWarn } from "../util/warn.js";
 
 import colors from './colors.js';
 import math from './math.js';
@@ -25,6 +25,7 @@ import time from './time.js';
 import io from './io.js';
 import process from "./process.js";
 import { runModule } from "../util/modules.js";
+import { memory } from "../db/memory.js";
 type FunctionCallback = (args: Runtime[], env: Environment) => RuntimeValue;
 
 export class Library {
@@ -58,7 +59,7 @@ export class Library {
         makeNum,
         makeArr,
         makeObj,
-
+		memory,
         library: opts
       };
       for(const pack of opts.packs){
@@ -92,13 +93,13 @@ export class Library {
         		  true
       	  )
         } else
-            new SkyScriptWarn(`Can't create custom function with name '${name}'` +` cause it already exists`);
+            new EcliptixWarn(`Can't create custom function with name '${name}'` +` cause it already exists`);
         return this.env.lookupVar(name);
     }
     public createVariable(this: Library, name: string, value: any, constant: boolean){
         this.env.devLookup(name) === undefined 
           ? this.env.declareVar(name, value, constant)
-          : new SkyScriptWarn(
+          : new EcliptixWarn(
 		  `Can't create custom variable with name '${name}'`
 		  	+` cause it already exists`);
     }

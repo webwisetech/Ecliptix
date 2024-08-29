@@ -15,10 +15,12 @@ ArrayLiteral,
 	Statement,
 	StringLiteral,
 	VarDeclaration,
+	WhenDeclaration,
+	WhileStatement,
 } from "../syntax/ast.js";
 import Environment from "./env.js";
 import * as evalue from "../eval/index.js";
-import { SkyScriptErr } from "../util/error.js";
+import { EcliptixErr } from "../util/error.js";
 
 export function evaluate(astNode: Statement, env: Environment): any {
 	switch (astNode.kind) {
@@ -54,8 +56,12 @@ export function evaluate(astNode: Statement, env: Environment): any {
 			return evalue.VariableDeclaration(astNode as VarDeclaration, env);
 		case "FunctionDeclaration":
 			return evalue.FunDeclaration(astNode as FunctionDeclaration, env);
+		case "WhenDeclaration":
+			return evalue.WhenStmt(astNode as WhenDeclaration, env);
+		case "WhileStatement":
+			return evalue.WhileStmt(astNode as WhileStatement, env);
 		
 		default:
-            new SkyScriptErr("This AST Node has not yet been setup for interpretation.\n"+astNode);
+            new EcliptixErr("This AST Node has not yet been setup for interpretation.\n"+JSON.stringify(astNode));
 	}
 }

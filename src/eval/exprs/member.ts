@@ -2,7 +2,7 @@ import Environment from "../../runtime/env.js"
 import { evaluate } from "../../runtime/index.js"
 import { Runtime, ObjectValue } from "../../runtime/val.js"
 import { MemberExpression, Identifier } from "../../syntax/ast.js"
-import { SkyScriptErr } from "../../util/error.js"
+import { EcliptixErr } from "../../util/error.js"
 
 export function MemberExpr(Expression: MemberExpression, env: Environment): Runtime {
     const object = evaluate(Expression.object, env)
@@ -18,6 +18,6 @@ export function MemberExpr(Expression: MemberExpression, env: Environment): Runt
             throw `Property "${property}" does not exist on object.`;
       }
     } else {
-        throw new SkyScriptErr('Cannot access property on non-object value.');
+        throw new EcliptixErr('Cannot access property on non-object value.');
     }
 }

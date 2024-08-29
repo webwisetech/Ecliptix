@@ -18,7 +18,8 @@ export type NodeType =
 	| "ObjectLiteral"
 	| "ArrayLiteral"
 	| "NumericLiteral"
-	| "StringLiteral";
+	| "StringLiteral"
+	| "WhenDeclaration";
 
 export interface Statement {
 	kind: NodeType;
@@ -44,6 +45,13 @@ export interface FunctionDeclaration extends Statement {
 	body: Statement[];
 }
 
+export interface WhenDeclaration extends Statement {
+	kind: "WhenDeclaration";
+	conditional: Expression;
+    operator: typeOfToken;
+    consequent: Statement[];
+}
+
 export interface IfStatement extends Statement {
     kind: 'IfStatement';
     conditional: Expression;
@@ -56,9 +64,7 @@ export interface WhileStatement extends Statement {
 	kind: "WhileStatement";
 	conditional: Expression;
     operator: typeOfToken;
-    consequent: Statement[];
-    alternate?: Statement[];
-	Function: CallExpression;
+	body: Statement[];
 }
 
 export interface Expression extends Statement {}
