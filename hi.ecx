@@ -1,8 +1,26 @@
-lock thing: string = math.round(42-2(17/4)+4)
-console.out(thing)
+console.out("Welcome to Ecliptix!")
+set sexuality: string = "straight"
 
-fun idk1() {
-	console.out("idrk")
+while(true){
+	shell("clear")
+
+	console.out("Currently, you're", sexuality)
+
+	console.out("[1] Turn gay")
+	console.out("[2] Turn lesbian")
+	console.out("[3] Turn nonbinary")
+	console.out("[7854876458476854756874524387] stay straight")
+
+	lock thing: string = console.ask("> ")
+	
+	if(thing == "1"){
+		sexuality = "gay"
+	} else if(thing == "2"){
+		sexuality = "lesbian"
+	} else if(thing == "3"){
+		sexuality = "nonbinary"
+	} else if(thing == "7854876458476854756874524387"){
+		console.out("good job!")
+		wait(5)
+	}
 }
-
-idk1()
