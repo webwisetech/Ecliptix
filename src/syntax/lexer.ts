@@ -60,13 +60,15 @@ const KEYWORDS: Record<string, typeOfToken> = {
 export interface Token {
 	value: string;
 	type: typeOfToken;
+	line?: number;
 }
 
 export class Lexer {
+	private line: number = 1;
 	private src: string[] = [];
 
 	private tokenize(value = "", type: typeOfToken): Token {
-		return { value, type } as Token;
+		return { value, type, line: this.line } as Token;
 	}
 
 	private isAlpha(src: string){
@@ -264,6 +266,7 @@ export class Lexer {
 						} 
 						} break;
 						case "skippable":
+							this.src[0] === "\n" ? this.line++ : "";
 							this.src.shift(); 
 						break;
 						default:

@@ -2,6 +2,7 @@
 import { memory } from "../db/memory.js";
 import { EcliptixErr } from "../util/error.js";
 import { translate } from "../util/translate.js";
+import colors from 'colors';
 import { EcliptixWarn } from "../util/warn.js";
 import {
 	AssignmentExpression,
@@ -90,7 +91,7 @@ export default class Parser {
 	}
 
 	private parseWhen(): Statement {
-		this.ensureToken(typeOfToken.When, 'Expected "when" keyword.');
+		const token = this.ensureToken(typeOfToken.When, 'Expected "when" keyword.');
         const conditional = this.parseExpression();
         const consequent: Statement[] = [];
         let right: Expression = {} as Expression;
@@ -110,11 +111,12 @@ export default class Parser {
           operator,
           right,
           consequent,
+		  line: token.line!
         } as WhenDeclaration;
 	}
 
 	private parseWhile(): Statement {
-		this.ensureToken(typeOfToken.While, 'Expected "while" keyword.');
+		const token = this.ensureToken(typeOfToken.While, 'Expected "while" keyword.');
         const conditional = this.parseExpression();
         const consequent: Statement[] = [];
         let right: Expression = {} as Expression;
@@ -134,6 +136,7 @@ export default class Parser {
           operator,
           right,
           body: consequent,
+		  line: token.line!
         } as WhileStatement;
 	}
 
@@ -142,11 +145,11 @@ export default class Parser {
 		while(this.nextToken().type != typeOfToken.Slash && this.isNotEOF()){
 			continue;
 		}
-		return { kind: 'NumericLiteral', value: 0 } as NumericLiteral;
+		return this.parsePrimary();
 	}
 
 	private parseIf(): IfStatement {
-        this.ensureToken(typeOfToken.If, 'Expected "if" keyword.');
+        const token = this.ensureToken(typeOfToken.If, 'Expected "if" keyword.');
         const conditional = this.parseExpression();
         const consequent: Statement[] = [];
         let right: Expression = {} as Expression;
@@ -186,11 +189,12 @@ export default class Parser {
           right,
           consequent,
           alternate,
+		  line: token.line!
         } as IfStatement
       }
 
 	private parseFunctions(): Statement {
-		this.nextToken(); 
+		const token = this.nextToken(); 
 		const name = this.ensureToken(
 			typeOfToken.Identifier,
 			"Expected function name following fn keyword"
@@ -230,13 +234,15 @@ export default class Parser {
 			name,
 			parameters: params,
 			kind: "FunctionDeclaration",
+			line: token.line!
 		} as FunctionDeclaration;
 
 		return fn;
 	}
 
 	private parseVariables(): Statement {
-		const isConstant = this.nextToken().type == typeOfToken.Lock;
+		const token = this.nextToken()
+		const isConstant = token.type == typeOfToken.Lock;
 		const identifier = this.ensureToken(
 			typeOfToken.Identifier,
 			"Expected identifier name following set/lock keywords."
@@ -269,7 +275,8 @@ export default class Parser {
 				value,
 				identifier, 
 				constant: isConstant,
-				type
+				type,
+				line: token.line!
 			} as VarDeclaration;
 		
 		return declaration;
@@ -284,9 +291,9 @@ export default class Parser {
 		const left = this.parseArrays();
 
 		if (this.currentToken().type == typeOfToken.Equals) {
-			this.nextToken(); 
+			const token = this.nextToken(); 
 			const value = this.parseAssignment();
-			return { value, assigne: left, kind: "AssignmentExpression" } as AssignmentExpression;
+			return { value, assigne: left, kind: "AssignmentExpression", line: token.line! } as AssignmentExpression;
 		}
 
 		return left;
@@ -325,7 +332,7 @@ export default class Parser {
 			typeOfToken.CloseBracket,
 			"Expected Closing bracket"
 		)
-		return { kind: "ArrayLiteral", elements: arr as ArrayElement[] } as ArrayLiteral;
+		return { kind: "ArrayLiteral", elements: arr as ArrayElement[], line: nex.line! } as ArrayLiteral;
 	}
 
 	private parseObjects(): Expression {
@@ -334,7 +341,7 @@ export default class Parser {
 			return this.parseAddition();
 		}
 
-		this.nextToken(); 
+		const token = this.nextToken(); 
 		const properties = new Array<Property>();
 
 		while (this.isNotEOF() && this.currentToken().type != typeOfToken.CloseBrace) {
@@ -371,14 +378,15 @@ export default class Parser {
 		}
 
 		this.ensureToken(typeOfToken.CloseBrace, "Object literal missing closing brace.");
-		return { kind: "ObjectLiteral", properties } as ObjectLiteral;
+		return { kind: "ObjectLiteral", properties, line: token.line! } as ObjectLiteral;
 	}
 
 	
 	private parseAddition(): Expression {
 		let left = this.parseMultiplication();
 		while (this.currentToken().value == "+" || this.currentToken().value == "-" && this.isNotEOF()) {
-			const operator = this.nextToken().value;
+			const token = this.nextToken();
+			const operator = token.value;
 
 			const right = this.parseMultiplication();
 			left = {
@@ -386,6 +394,7 @@ export default class Parser {
 				left,
 				right,
 				operator,
+			  	line: token.line!
 			} as BinaryExpression;
 		}
 
@@ -395,7 +404,8 @@ export default class Parser {
 	private parseMultiplication(): Expression {
 		let left = this.parseMemberCalls();
 		while ( ["/", "*", "%"].includes(this.currentToken().value) ){
-			const operator = this.nextToken().value;
+			const token = this.nextToken();
+			const operator = token.value;
 		
 			const right = this.parseMemberCalls();
 			left = {
@@ -403,6 +413,7 @@ export default class Parser {
 				left,
 				right,
 				operator,
+				line: token.line!
 			} as BinaryExpression;
 		}
 
@@ -530,7 +541,7 @@ export default class Parser {
 			}
 
 			default:
-				throw new EcliptixErr("Unknown Token found while parsing." + JSON.stringify(this.currentToken()));
+				throw new EcliptixErr(`Unknown Token found while parsing.\n- Line: ${colors.yellow(`${this.currentToken().line!}`)}\n- Character: ${colors.green(`'${this.currentToken().value}'`)}`);
 		}
 	}
 }

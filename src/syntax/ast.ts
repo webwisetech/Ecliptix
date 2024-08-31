@@ -23,6 +23,7 @@ export type NodeType =
 
 export interface Statement {
 	kind: NodeType;
+	line?: number;
 }
 
 export interface Program extends Statement {

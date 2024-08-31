@@ -10,7 +10,7 @@ while(true){
 	console.out("[2] Turn lesbian")
 	console.out("[3] Turn nonbinary")
 	console.out("[7854876458476854756874524387] stay straight")
-
+;
 	lock thing: string = console.ask("> ")
 	
 	if(thing == "1"){
