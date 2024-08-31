@@ -238,13 +238,17 @@ export class Lexer {
 							while (this.src.length > 0 && this.isNumber(this.src[0])) {
 								num += this.src.shift();
 							}
-							const thing = this.src.shift()!;
-							tokens.push(this.tokenize(num, typeOfToken.Number));
-							if(thing === "("){
-								tokens.push(this.tokenize("*", typeOfToken.BinaryOperator))
-								tokens.push(this.tokenize("(", typeOfToken.OpenParen));
-							} else {
-								this.src.unshift(thing)
+							if(this.src.length > 0){
+								const thing = this.src.shift()!;
+								tokens.push(this.tokenize(num, typeOfToken.Number));
+								if(thing === "("){
+									tokens.push(this.tokenize("*", typeOfToken.BinaryOperator))
+									tokens.push(this.tokenize("(", typeOfToken.OpenParen));
+								} else {
+									this.src.unshift(thing)
+								}
+							}else {
+								tokens.push(this.tokenize(num, typeOfToken.Number));
 							}
 						} break;
 						case "alpha": {

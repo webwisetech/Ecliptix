@@ -1,0 +1,3 @@
+MainFile "file.js"
+Version "0.0.1"
+Dependencies ["io", "math"]

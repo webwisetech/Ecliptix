@@ -80,7 +80,7 @@ export class Library {
             time(options)
           break;
           default:
-            await runModule("./ss_mods", pack+".js", options);
+            await runModule(pack);
         }
       }
     }

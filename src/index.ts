@@ -6,7 +6,7 @@ import { evaluate } from './runtime/index.js'; // actual code running
 import _colors from 'colors'; // im not gay i swear
 import { Library } from './lib/index.js'; // a library with no books
 import yml from 'yaml' // yeah am lazy
-import { Lexer } from './syntax/lexer.js'; // nobody likes to learn a new language if its confusing
+import { Lexer, typeOfToken } from './syntax/lexer.js'; // nobody likes to learn a new language if its confusing
 import { question as prompt } from 'readline-sync';
 import { readFile } from './util/fs.js'; // file system stuff
 

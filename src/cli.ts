@@ -8,8 +8,8 @@ import yml from 'yaml';
 import config from './util/config.js';
 const { version } = Config;
 
-const [node_exec, ss_path, ...args] = process.argv;
-const help = [
+const [node_exec, ss_path, ...args]: string[] = process.argv;
+const help: string[] = [
     "Ecliptix help version "+version,
     "Usage:",
     "ecx [file] <arguments>",
