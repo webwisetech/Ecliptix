@@ -1,26 +1,26 @@
 console.out("Welcome to Ecliptix!")
-set sexuality: string = "straight"
+set money: number = 0
 
 while(true){
-	shell("clear")
+	$"clear";
 
-	console.out("Currently, you're", sexuality)
+	console.out("Currently, you have", colors.yellow(money))
 
-	console.out("[1] Turn gay")
-	console.out("[2] Turn lesbian")
-	console.out("[3] Turn nonbinary")
-	console.out("[7854876458476854756874524387] stay straight")
-;
+	console.out("[1] Work")
+	console.out("[2] Shop")
+	console.out("[3] Exit")
+
 	lock thing: string = console.ask("> ")
 	
 	if(thing == "1"){
-		sexuality = "gay"
+		lock random: number = randomNumber(0, 100)
+		money += random
+		console.out("You worked hard and gained", colors.yellow(random))
+		process.wait(3)
 	} else if(thing == "2"){
-		sexuality = "lesbian"
+		console.out("This has not been implemented yet")
+		process.wait(3)
 	} else if(thing == "3"){
-		sexuality = "nonbinary"
-	} else if(thing == "7854876458476854756874524387"){
-		console.out("good job!")
-		wait(5)
+		process.quit(0)
 	}
 }
