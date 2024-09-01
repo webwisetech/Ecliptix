@@ -1,10 +1,12 @@
 console.out("Welcome to Ecliptix!")
 set money: number = 0
+lock thing: shell = $"ls"
+console.out(thing)
 
 while(true){
-	$"clear";
+	$'clear'
 
-	console.out("Currently, you have", colors.yellow(money))
+	console.out("Currently, you have", yellow(money))
 
 	console.out("[1] Work")
 	console.out("[2] Shop")
@@ -14,12 +16,12 @@ while(true){
 	
 	if(thing == "1"){
 		lock random: number = randomNumber(0, 100)
-		money += random
-		console.out("You worked hard and gained", colors.yellow(random))
-		process.wait(3)
+		money = money + random
+		console.out("You worked hard and gained", yellow(random))
+		wait(3)
 	} else if(thing == "2"){
 		console.out("This has not been implemented yet")
-		process.wait(3)
+		wait(3)
 	} else if(thing == "3"){
 		process.quit(0)
 	}
