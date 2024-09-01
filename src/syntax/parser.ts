@@ -25,6 +25,7 @@ ArrayLiteral,
 ArrayElement,
 WhenDeclaration,
 WhileStatement,
+DSNotation,
 } from "./ast.js";
 
 import { Token, typeOfToken } from "./lexer.js";
@@ -85,6 +86,8 @@ export default class Parser {
 				return this.parseWhen();
 			case typeOfToken.While:
 				return this.parseWhile();
+			case typeOfToken.DollarSign:
+				return this.parseDSNotation();
 			default:
 				return this.parseExpression();
 		}
@@ -249,7 +252,8 @@ export default class Parser {
 		).value;
 		let type = "";
 
-		this.nextToken();
+		const thing = this.nextToken();
+		
 		type = this.ensureToken(typeOfToken.Identifier, "No type given.").value;
 
 		if (this.currentToken().type == typeOfToken.Semicolon) {
@@ -262,9 +266,11 @@ export default class Parser {
 				kind: "VarDeclaration",
 				identifier,
 				constant: false,
-				type
+				type,
+				line: token.line!
 			} as VarDeclaration;
 		}
+
 		this.ensureToken(
 			typeOfToken.Equals,
 			"Expected equals token following identifier in var declaration."
@@ -302,7 +308,7 @@ export default class Parser {
 	private parseArrays(): Expression {
 		const nex = this.currentToken();
 		if(nex.type !== typeOfToken.OpenBracket){
-			return this.parseObjects();
+			return this.parseDSNotation();
 		}
 		this.nextToken();
 		let num = -1;
@@ -333,6 +339,21 @@ export default class Parser {
 			"Expected Closing bracket"
 		)
 		return { kind: "ArrayLiteral", elements: arr as ArrayElement[], line: nex.line! } as ArrayLiteral;
+	}
+
+	private parseDSNotation(): Statement {
+		const t = this.nextToken();
+		if(t.type !== typeOfToken.DollarSign){
+			this.tokens.unshift(t);
+			return this.parseObjects();
+		}
+		const token = this.ensureToken(typeOfToken.String, "Expected a string after the $ Notation");
+
+		return {
+			kind: "DollarSignNotation",
+			line: t.line!,
+			shellCmd: { kind: "StringLiteral", value: token.value } as StringLiteral
+		} as DSNotation;
 	}
 
 	private parseObjects(): Expression {

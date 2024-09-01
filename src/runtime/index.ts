@@ -4,6 +4,7 @@ ArrayLiteral,
 	AssignmentExpression,
 	BinaryExpression,
 	CallExpression,
+	DSNotation,
 	EqualityExpression,
 	FunctionDeclaration,
 	Identifier,
@@ -60,6 +61,8 @@ export function evaluate(astNode: Statement, env: Environment): any {
 			return evalue.WhenStmt(astNode as WhenDeclaration, env);
 		case "WhileStatement":
 			return evalue.WhileStmt(astNode as WhileStatement, env);
+		case "DollarSignNotation":
+			return evalue.ShellCMD(astNode as DSNotation, env);
 		
 		default:
             new EcliptixErr("This AST Node has not yet been setup for interpretation.\n"+JSON.stringify(astNode));

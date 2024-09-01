@@ -19,7 +19,8 @@ export type NodeType =
 	| "ArrayLiteral"
 	| "NumericLiteral"
 	| "StringLiteral"
-	| "WhenDeclaration";
+	| "WhenDeclaration"
+	| "DollarSignNotation";
 
 export interface Statement {
 	kind: NodeType;
@@ -30,6 +31,11 @@ export interface Program extends Statement {
 	kind: "Program";
 	body: Statement[];
 }
+
+export interface DSNotation extends Statement {
+	kind: "DollarSignNotation";
+	shellCmd: StringLiteral;
+} 
 
 export interface VarDeclaration extends Statement {
 	kind: "VarDeclaration";

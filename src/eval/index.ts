@@ -17,3 +17,4 @@ export * from './stmts/program.js';
 export * from './stmts/var.js';
 export * from './stmts/when.js';
 export * from './stmts/while.js';
+export * from './stmts/dsnotation.js';

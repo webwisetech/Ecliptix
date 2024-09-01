@@ -10,6 +10,7 @@ export enum typeOfToken {
 	DoubleEquals,
 	NotEquals,
 	Comma,
+	DollarSign,
 	Dot,
 	Colon,
 	Semicolon,
@@ -92,6 +93,9 @@ export class Lexer {
 			let src = this.src[0];
 			
 			switch(this.src[0]){
+				case "$":
+					tokens.push(this.tokenize(this.src.shift(), typeOfToken.DollarSign));
+				break;
 				case "(":
 					tokens.push(this.tokenize(this.src.shift(), typeOfToken.OpenParen));
 				break;
@@ -271,7 +275,7 @@ export class Lexer {
 						break;
 						default:
 							new EcliptixErr(
-								"Unreconized character found in source: " +this.src[0].charCodeAt(0) +"\n"+this.src[0]
+								"Unrecognized character found in source: " +this.src[0].charCodeAt(0) +"\n"+this.src[0]
 							);
 						break;
 					}

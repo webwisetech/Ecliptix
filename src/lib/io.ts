@@ -7,7 +7,8 @@ import {
     Runtime,
     ArrayValue,
     ObjectValue,
-    makeObj
+    makeObj,
+	ShellCommand
 } from "../runtime/val.js";
 import util from 'node:util';
 import { question } from 'readline-sync';
@@ -37,6 +38,9 @@ export default ({ makeStr, library, makeNull }: LibraryOptions) => {
                     case 'null':
                         log.push(((arg as NullValue).value))
                     continue
+					case 'shell':
+						log.push((arg as ShellCommand).value)
+					continue
                     default:
                         log.push(arg)
                 }

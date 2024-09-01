@@ -7,6 +7,7 @@ export type ValueType =
 	| "string"
 	| "array"
 	| "object"
+	| "shell"
 	| "native-fn"
 	| "function"
 	| "while"
@@ -43,6 +44,11 @@ export interface ObjectValue extends Runtime {
 export interface StringValue extends Runtime {
     type: 'string'
     value: string
+}
+
+export interface ShellCommand extends Runtime {
+	type: "shell";
+	value: string;
 }
 
 export type FunctionCall = (args: Runtime[], env: Environment) => Runtime | StringValue;
